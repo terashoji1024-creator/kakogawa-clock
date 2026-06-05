@@ -1,1 +1,381 @@
+<!DOCTYPE html>
 
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KAKOGAWA WEATHER TERMINAL</title>
+<style>
+* { margin: 0; padding: 0; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+body {
+background: #000;
+color: #fff;
+font-family: Courier, monospace;
+height: 100%;
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-orient: vertical;
+-webkit-flex-direction: column;
+flex-direction: column;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+justify-content: center;
+overflow: hidden;
+padding: 8px;
+min-height: 100vh;
+}
+
+.terminal {
+width: 100%;
+max-width: 860px;
+border: 1px solid #333;
+}
+
+.date-bar {
+text-align: center;
+padding: 10px 0;
+font-size: 18px;
+letter-spacing: 3px;
+color: #fff;
+border-bottom: 1px solid #333;
+}
+
+.clock-section {
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+justify-content: center;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+padding: 16px 8px;
+border-bottom: 1px solid #333;
+background: #000;
+}
+
+.flip-card {
+background: #111;
+border-radius: 8px;
+width: 80px;
+height: 100px;
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+justify-content: center;
+position: relative;
+margin: 0 4px;
+overflow: hidden;
+}
+
+.flip-card:before {
+content: ‘’;
+position: absolute;
+left: 0; right: 0;
+top: 50%;
+height: 2px;
+background: #000;
+z-index: 2;
+}
+
+.flip-number {
+font-family: Helvetica, Arial, sans-serif;
+font-weight: bold;
+font-size: 70px;
+color: #fff;
+line-height: 1;
+position: relative;
+z-index: 1;
+}
+
+.colon {
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-orient: vertical;
+-webkit-flex-direction: column;
+flex-direction: column;
+margin: 0 6px;
+margin-bottom: 4px;
+}
+
+.colon-dot {
+width: 10px;
+height: 10px;
+background: #fff;
+border-radius: 50%;
+margin: 8px 0;
+}
+
+.weather-section {
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+border-bottom: 1px solid #333;
+}
+
+.weather-day {
+-webkit-box-flex: 1;
+-webkit-flex: 1;
+flex: 1;
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-orient: vertical;
+-webkit-flex-direction: column;
+flex-direction: column;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+padding: 8px 2px;
+border-right: 1px solid #333;
+}
+
+.weather-day:last-child { border-right: none; }
+
+.day-label {
+font-size: 13px;
+color: #ccc;
+margin-bottom: 4px;
+}
+
+.weather-icon {
+margin: 4px 0;
+}
+
+.temp-high {
+font-size: 12px;
+color: #fff;
+margin-top: 4px;
+}
+
+.temp-divider {
+width: 70%;
+height: 1px;
+background: #333;
+margin: 3px 0;
+}
+
+.temp-low {
+font-size: 12px;
+color: #888;
+}
+
+.footer-bar {
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+-webkit-box-pack: justify;
+-webkit-justify-content: space-between;
+justify-content: space-between;
+padding: 10px 14px;
+}
+
+.terminal-label {
+font-size: 11px;
+letter-spacing: 2px;
+color: #aaa;
+}
+
+.current-temp {
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-align: baseline;
+-webkit-align-items: baseline;
+align-items: baseline;
+}
+
+.current-label {
+font-size: 11px;
+color: #888;
+letter-spacing: 1px;
+margin-right: 6px;
+}
+
+.current-value {
+font-family: Helvetica, Arial, sans-serif;
+font-weight: bold;
+font-size: 36px;
+color: #fff;
+line-height: 1;
+}
+
+.current-unit {
+font-size: 16px;
+color: #aaa;
+margin-left: 2px;
+}
+
+/* タブレット（iPad）用 */
+@media (min-width: 600px) {
+.flip-card { width: 130px; height: 160px; margin: 0 6px; }
+.flip-number { font-size: 110px; }
+.colon-dot { width: 14px; height: 14px; margin: 12px 0; }
+.colon { margin: 0 10px; }
+.date-bar { font-size: 22px; padding: 14px 0; }
+.day-label { font-size: 16px; }
+.temp-high, .temp-low { font-size: 14px; }
+.terminal-label { font-size: 14px; }
+.current-value { font-size: 46px; }
+.current-unit { font-size: 20px; }
+.weather-day { padding: 12px 4px; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="terminal">
+  <div class="date-bar" id="dateBar">----.--.-- ---</div>
+
+  <div class="clock-section">
+    <div class="flip-card"><span class="flip-number" id="h1">0</span></div>
+    <div class="flip-card"><span class="flip-number" id="h2">0</span></div>
+    <div class="colon">
+      <div class="colon-dot"></div>
+      <div class="colon-dot"></div>
+    </div>
+    <div class="flip-card"><span class="flip-number" id="m1">0</span></div>
+    <div class="flip-card"><span class="flip-number" id="m2">0</span></div>
+  </div>
+
+  <div class="weather-section" id="weatherSection">
+    <div style="width:100%;padding:20px;text-align:center;color:#555;font-size:12px;">天気データ取得中...</div>
+  </div>
+
+  <div class="footer-bar">
+    <div class="terminal-label">KAKOGAWA WEATHER TERMINAL</div>
+    <div class="current-temp">
+      <span class="current-label">CURRENT</span>
+      <span class="current-value" id="currentTemp">--</span>
+      <span class="current-unit">&#8451;</span>
+    </div>
+  </div>
+</div>
+
+<script>
+var DAYS_JA = ['\u65e5','\u6708','\u706b','\u6c34','\u6728','\u91d1','\u571f'];
+var DAYS_EN = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+function iconSVG(code) {
+  var sun = '<circle cx="18" cy="18" r="7" fill="none" stroke="white" stroke-width="2.5"/>'
+    + '<line x1="18" y1="2" x2="18" y2="7" stroke="white" stroke-width="2" stroke-linecap="round"/>'
+    + '<line x1="18" y1="29" x2="18" y2="34" stroke="white" stroke-width="2" stroke-linecap="round"/>'
+    + '<line x1="2" y1="18" x2="7" y2="18" stroke="white" stroke-width="2" stroke-linecap="round"/>'
+    + '<line x1="29" y1="18" x2="34" y2="18" stroke="white" stroke-width="2" stroke-linecap="round"/>'
+    + '<line x1="6" y1="6" x2="9.5" y2="9.5" stroke="white" stroke-width="2" stroke-linecap="round"/>'
+    + '<line x1="26.5" y1="26.5" x2="30" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>'
+    + '<line x1="30" y1="6" x2="26.5" y2="9.5" stroke="white" stroke-width="2" stroke-linecap="round"/>'
+    + '<line x1="9.5" y1="26.5" x2="6" y2="30" stroke="white" stroke-width="2" stroke-linecap="round"/>';
+  var cloud = '<path d="M6 24 Q3 24 3 20 Q3 16 7 15.5 Q7 10 13 10 Q18 10 19 14.5 Q24 14.5 24 19 Q24 24 19 24 Z" fill="none" stroke="white" stroke-width="2"/>';
+  var rain = cloud
+    + '<line x1="10" y1="27" x2="9" y2="32" stroke="white" stroke-width="2" stroke-linecap="round"/>'
+    + '<line x1="15" y1="27" x2="14" y2="32" stroke="white" stroke-width="2" stroke-linecap="round"/>'
+    + '<line x1="20" y1="27" x2="19" y2="32" stroke="white" stroke-width="2" stroke-linecap="round"/>';
+  var suncloud = sun + '<path d="M8 28 Q5 28 5 25 Q5 22 8 21.5 Q8 18 12 18 Q16 18 16.5 21.5 Q21 21.5 21 25 Q21 28 17 28 Z" fill="#111" stroke="white" stroke-width="2"/>';
+  var thunder = cloud + '<polyline points="16,25 13,30 17,30 14,35" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"/>';
+  var snow = cloud
+    + '<text x="7" y="33" font-size="11" fill="white" font-family="Courier">* * *</text>';
+
+  var svg;
+  if (code === 0) { svg = sun; }
+  else if (code <= 2) { svg = suncloud; }
+  else if (code <= 3) { svg = cloud; }
+  else if (code <= 67) { svg = rain; }
+  else if (code <= 77) { svg = snow; }
+  else if (code <= 82) { svg = rain; }
+  else { svg = thunder; }
+
+  return '<svg width="32" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">' + svg + '</svg>';
+}
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+function updateClock() {
+  var now = new Date();
+  var h = now.getHours();
+  var m = now.getMinutes();
+  document.getElementById('h1').textContent = Math.floor(h / 10);
+  document.getElementById('h2').textContent = h % 10;
+  document.getElementById('m1').textContent = Math.floor(m / 10);
+  document.getElementById('m2').textContent = m % 10;
+  var dow = now.getDay();
+  document.getElementById('dateBar').textContent =
+    now.getFullYear() + '.' + pad(now.getMonth()+1) + '.' + pad(now.getDate()) + '  ' + DAYS_EN[dow];
+}
+
+function fetchWeather() {
+  var url = 'https://api.open-meteo.com/v1/forecast'
+    + '?latitude=34.7572&longitude=134.8437'
+    + '&daily=weathercode,temperature_2m_max,temperature_2m_min'
+    + '&current_weather=true'
+    + '&timezone=Asia%2FTokyo'
+    + '&forecast_days=7';
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          renderWeather(JSON.parse(xhr.responseText));
+        } catch(e) {
+          showError('parse error');
+        }
+      } else {
+        showError('status:' + xhr.status);
+      }
+    }
+  };
+  try { xhr.send(); } catch(e) { showError('send error'); }
+}
+
+function renderWeather(data) {
+  var daily = data.daily;
+  var current = data.current_weather;
+  if (current) {
+    document.getElementById('currentTemp').textContent = Math.round(current.temperature);
+  }
+  var html = '';
+  for (var i = 0; i < 7; i++) {
+    var parts = daily.time[i].split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var code = daily.weathercode[i];
+    html += '<div class="weather-day">'
+      + '<div class="day-label">' + DAYS_JA[d.getDay()] + '</div>'
+      + '<div class="weather-icon">' + iconSVG(code) + '</div>'
+      + '<div class="temp-high">' + Math.round(daily.temperature_2m_max[i]) + '&#8451;</div>'
+      + '<div class="temp-divider"></div>'
+      + '<div class="temp-low">' + Math.round(daily.temperature_2m_min[i]) + '&#8451;</div>'
+      + '</div>';
+  }
+  document.getElementById('weatherSection').innerHTML = html;
+}
+
+function showError(msg) {
+  document.getElementById('weatherSection').innerHTML =
+    '<div style="width:100%;padding:16px;text-align:center;color:#555;font-size:11px;">&#22825;&#27668;&#12487;&#12540;&#12479;&#21462;&#24471;&#12456;&#12521;&#12540; (' + msg + ')</div>';
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+fetchWeather();
+setInterval(fetchWeather, 1800000);
+</script>
+
+</body>
+</html>
