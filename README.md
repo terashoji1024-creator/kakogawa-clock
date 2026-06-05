@@ -1,1 +1,171 @@
-# kakogawa-clock
+# index.html
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>KAKOGAWA CLOCK</title>
+<style>
+* { margin: 0; padding: 0; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+html, body {
+width: 100%;
+height: 100%;
+background: #000;
+overflow: hidden;
+}
+
+body {
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-orient: vertical;
+-webkit-flex-direction: column;
+flex-direction: column;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+justify-content: center;
+}
+
+.date-bar {
+color: #fff;
+font-family: Courier, monospace;
+font-size: 5vw;
+letter-spacing: 0.2em;
+text-align: center;
+padding-bottom: 2vw;
+border-bottom: 1px solid #333;
+width: 96vw;
+margin-bottom: 2vw;
+}
+
+.clock-row {
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+justify-content: center;
+width: 96vw;
+}
+
+.flip-card {
+background: #111;
+border-radius: 1.5vw;
+width: 22vw;
+height: 28vw;
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+-webkit-box-pack: center;
+-webkit-justify-content: center;
+justify-content: center;
+position: relative;
+margin: 0 1vw;
+overflow: hidden;
+}
+
+.flip-card:before {
+content: ‘’;
+position: absolute;
+left: 0; right: 0;
+top: 50%;
+height: 2px;
+background: #000;
+z-index: 2;
+}
+
+.flip-number {
+font-family: Helvetica, Arial, sans-serif;
+font-weight: bold;
+font-size: 20vw;
+color: #fff;
+line-height: 1;
+position: relative;
+z-index: 1;
+}
+
+.colon {
+display: -webkit-box;
+display: -webkit-flex;
+display: flex;
+-webkit-box-orient: vertical;
+-webkit-flex-direction: column;
+flex-direction: column;
+-webkit-box-align: center;
+-webkit-align-items: center;
+align-items: center;
+margin: 0 1vw;
+margin-bottom: 2vw;
+}
+
+.colon-dot {
+width: 2vw;
+height: 2vw;
+background: #fff;
+border-radius: 50%;
+margin: 1.5vw 0;
+}
+
+.footer {
+color: #555;
+font-family: Courier, monospace;
+font-size: 2vw;
+letter-spacing: 0.15em;
+margin-top: 2vw;
+}
+</style>
+
+</head>
+<body>
+
+<div class="date-bar" id="dateBar">----.--.-- ---</div>
+
+<div class="clock-row">
+  <div class="flip-card"><span class="flip-number" id="h1">0</span></div>
+  <div class="flip-card"><span class="flip-number" id="h2">0</span></div>
+  <div class="colon">
+    <div class="colon-dot"></div>
+    <div class="colon-dot"></div>
+  </div>
+  <div class="flip-card"><span class="flip-number" id="m1">0</span></div>
+  <div class="flip-card"><span class="flip-number" id="m2">0</span></div>
+</div>
+
+<div class="footer">KAKOGAWA WEATHER TERMINAL</div>
+
+<script>
+var DAYS_EN = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+function updateClock() {
+  var now = new Date();
+  var h = now.getHours();
+  var m = now.getMinutes();
+  document.getElementById('h1').textContent = Math.floor(h / 10);
+  document.getElementById('h2').textContent = h % 10;
+  document.getElementById('m1').textContent = Math.floor(m / 10);
+  document.getElementById('m2').textContent = m % 10;
+  document.getElementById('dateBar').textContent =
+    now.getFullYear() + '.' + pad(now.getMonth()+1) + '.' + pad(now.getDate()) + '  ' + DAYS_EN[now.getDay()];
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>
